@@ -1,4 +1,5 @@
 import { Schema, model, models } from "mongoose";
+import slugify from 'slugify'
 
 const InputFieldSchema = new Schema({
   field_name: { type: String, required: true },

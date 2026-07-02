@@ -65,8 +65,9 @@ export const createVoucher = async (req: Request, res: Response) => {
     const savedVoucher = await newVoucher.save();
     res.status(201).json(successResponse("Voucher created", savedVoucher));
     return
-  } catch (error) {
-    res.status(500).json(errorResponse("Failed to create voucher", error));
+  } catch (error: any) {
+     console.error(error);
+    res.status(500).json(errorResponse("Failed to create voucher", error.message));
     return
   }
 };

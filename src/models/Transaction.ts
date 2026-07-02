@@ -1,9 +1,8 @@
-// models/Transaction.ts
-import { Schema, model, models } from "mongoose";
+import { Schema, model, models,CallbackWithoutResultAndOptionalError  } from "mongoose";
 import { Counter } from "./Counter";
 
 const TransactionSchema = new Schema({
-  transaction_id: { type: String, unique: true }, // Auto-generated
+  transaction_id: { type: String, unique: true }, 
   buyer_email: { type: String, required: true },
   user_id: { type: Schema.Types.ObjectId, ref: "User"},
   voucher_id: { type: Schema.Types.ObjectId, ref: "Voucher", required: true },
@@ -35,7 +34,7 @@ const TransactionSchema = new Schema({
 }, { timestamps: true });
 
 // Middleware untuk auto-increment transaction_id
-TransactionSchema.pre("save", async function (next) {
+TransactionSchema.pre("save", async function (next: CallbackWithoutResultAndOptionalError) {
   if (this.isNew && !this.transaction_id) {
     const counter = await Counter.findByIdAndUpdate(
       { _id: "transaction" },
