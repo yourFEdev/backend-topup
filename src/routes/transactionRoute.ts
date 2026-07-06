@@ -5,17 +5,17 @@ import {
   getTransactionById,
   updateTransactionStatus,
   deleteTransaction,
-  updateTransaction
+  updateTransaction,
 } from "../controllers/transactionController";
-import { authenticateToken } from "../middleware/JwtMiddleware";
+import { authenticateToken } from "../middleware/jwtMiddleware";
 
 const router = express.Router();
 
 router.post("/", createTransaction);
-router.get("/",authenticateToken, getTransactions);
+router.get("/", authenticateToken, getTransactions);
 router.get("/:id", getTransactionById);
-router.put("/:id",authenticateToken, updateTransaction);
+router.put("/:id", authenticateToken, updateTransaction);
 router.get("/update-status/:id", updateTransactionStatus);
-router.delete("/:id",authenticateToken, deleteTransaction);
+router.delete("/:id", authenticateToken, deleteTransaction);
 
 export default router;

@@ -16,59 +16,58 @@ export const getVouchers = async (req: Request, res: Response) => {
 // Get one voucher
 export const getVoucherById = async (req: Request, res: Response) => {
   try {
-    const voucher = await Voucher.find({ _id: req.params.id }); 
-    console.log(req.params.id)
+    const voucher = await Voucher.find({ _id: req.params.id });
+    console.log(req.params.id);
     const list = await Voucher.find();
     console.log("Semua nama voucher:");
-    list.forEach(v => console.log(v.name));
-    
+    list.forEach((v) => console.log(v.name));
+
     if (!voucher) {
       res.status(404).json(errorResponse("Voucher not found"));
-      return
+      return;
     }
     res.status(200).json(successResponse("Fetched voucher", voucher));
   } catch (error) {
     res.status(500).json(errorResponse("Failed to fetch voucher", error));
-   
   }
 };
 
-// Get one Voucher by name 
+// Get one Voucher by name
 export const getVoucherByGameName = async (req: Request, res: Response) => {
   try {
     const gameName = req.params.name;
     console.log("Game name param:", req.params.name);
-    const voucher = await Voucher.find({ game_name: gameName });
+    const voucher = await Voucher.findOne({ slug: gameName });
+    console.log(voucher);
     if (!voucher || voucher.length === 0) {
-       res.status(404).json(errorResponse("Voucher not found"));
-       return
+      res.status(404).json(errorResponse("Voucher not found"));
+      return;
     }
-    res.status(200).json(successResponse("Fetched voucher by game name", voucher));
-    return
+    res
+      .status(200)
+      .json(successResponse("Fetched voucher by game name", voucher));
+    return;
   } catch (error) {
     res.status(500).json(errorResponse("Failed to fetch voucher", error));
-    return
+    return;
   }
 };
 
 // Create voucher
 export const createVoucher = async (req: Request, res: Response) => {
   try {
-    const { voucher_name, game_name, ...rest } = req.body;
-    const slug = slugify(voucher_name, { lower: true, strict: true });
-    const newVoucher = new Voucher({
-      voucher_id: slug,
-      voucher_name,
-      game_name,
-      ...rest,
-    });
+    const newVoucher = new Voucher(req.body);
     const savedVoucher = await newVoucher.save();
+
     res.status(201).json(successResponse("Voucher created", savedVoucher));
-    return
+    return;
   } catch (error: any) {
-     console.error(error);
-    res.status(500).json(errorResponse("Failed to create voucher", error.message));
-    return
+    console.error(error);
+
+    res
+      .status(500)
+      .json(errorResponse("Failed to create voucher", error.message));
+    return;
   }
 };
 
@@ -83,16 +82,16 @@ export const updateVoucher = async (req: Request, res: Response) => {
     });
 
     if (!updated) {
-       res.status(404).json(errorResponse("Voucher not found"));
-       return
+      res.status(404).json(errorResponse("Voucher not found"));
+      return;
     }
     res.status(200).json(successResponse("Voucher updated", updated));
-    return
+    return;
   } catch (error: any) {
     res
       .status(500)
       .json(errorResponse("Failed to update voucher", error.message));
-      return
+    return;
   }
 };
 
@@ -101,9 +100,9 @@ export const deleteVoucher = async (req: Request, res: Response) => {
   try {
     const deleted = await Voucher.findOneAndDelete({ _id: req.params.id });
     res.status(200).json(successResponse("Voucher deleted", deleted));
-    return
+    return;
   } catch (error) {
     res.status(500).json(errorResponse("Failed to delete voucher", error));
-    return
+    return;
   }
 };

@@ -96,10 +96,11 @@ export const updateTransactionStatus = async (req: Request, res: Response) => {
 // Get all transactions
 export const getTransactions = async (req: Request, res: Response) => {
   try {
-    const transactions = await Transaction.find({
-      payment_status: { $ne: "pending" }
-    });
-
+    // const transactions = await Transaction.find({
+    //   payment_status: { $ne: "pending" }
+    // });
+    const transactions = await Transaction.find();
+    console.log(transactions)
     res.json(successResponse("Transactions fetched", transactions));
     return;
   } catch (error) {

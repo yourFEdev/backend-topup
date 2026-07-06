@@ -1,10 +1,11 @@
 import express from "express";
 import cors from "cors";
-import authRoutes from './routes/authRoute'
-import voucherRoute from './routes/voucherRoute'
-import transactionRoute from './routes/transactionRoute'
-import midtransRoute from './routes/midtransRoute'
-import reportRoute from './routes/reportRoute'
+import authRoutes from "./routes/authRoute";
+import voucherRoute from "./routes/voucherRoute";
+import transactionRoute from "./routes/transactionRoute";
+import midtransRoute from "./routes/midtransRoute";
+import reportRoute from "./routes/reportRoute";
+import categoryRoute from "./routes/categoryRoute";
 
 const app = express();
 
@@ -17,8 +18,9 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/voucher", voucherRoute);
-app.use("/api/transaction",transactionRoute);
-app.use("/api/midtrans",midtransRoute);
-app.use("/api/report",reportRoute);
+app.use("/api/transaction", transactionRoute);
+app.use("/api/midtrans", midtransRoute);
+app.use("/api/report", reportRoute);
+app.use("/api/category", categoryRoute);
 
 export default app;

@@ -1,25 +1,86 @@
 import { Schema, model, models } from "mongoose";
-import slugify from 'slugify'
 
-const InputFieldSchema = new Schema({
-  field_name: { type: String, required: true },
-  label: { type: String, required: true },
-  required: { type: Boolean, default: true },
-}, { _id: false });
+const FieldSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    label: {
+      type: String,
+      required: true,
+    },
+    component: {
+      type: String,
+      enum: ["input", "select", "textarea"],
+      default: "input",
+    },
+    placeholder: {
+      type: String,
+    },
+    type: {
+      type: String,
+      default: "text",
+    },
+    required: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  { _id: false },
+);
 
-const VariantSchema = new Schema({
-  name: { type: String, required: true },
-  price: { type: Number, required: true },
-}, { _id: false });
+const VariantSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    discount: {
+      type: Number,
+      default: 0,
+    },
+    stock: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  { _id: false },
+);
 
-const VoucherSchema = new Schema({
-  voucher_id: { type: String, unique: true, required: true }, // custom ID slug
-  game_name: { type: String, required: true },
-  voucher_name: { type: String, required: true },
-  image_url: { type: String },
-  description: { type: String },
-  input_fields: [InputFieldSchema],
-  variants: [VariantSchema],
-}, { timestamps: true });
+const VoucherSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    category: {
+      type: String,
+      required: true,
+    },
+
+    description: String,
+    image: String,
+    badge: String,
+    discountLabel: String,
+    expired: Date,
+    fields: [FieldSchema],
+    variants: [VariantSchema],
+  },
+  {
+    timestamps: true,
+  },
+);
 
 export const Voucher = models.Voucher || model("Voucher", VoucherSchema);
