@@ -6,7 +6,41 @@ import slugify from "slugify";
 // Get all vouchers
 export const getVouchers = async (req: Request, res: Response) => {
   try {
-    const vouchers = await Voucher.find();
+    const search =
+      typeof req.query.search === "string" ? req.query.search.trim() : "";
+
+    const category =
+      typeof req.query.category === "string" ? req.query.category.trim() : "";
+
+    const query: any = {};
+
+    // Search
+    if (search) {
+      query.$or = [
+        {
+          title: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+        {
+          slug: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+      ];
+    }
+
+    // Category
+    if (category && category !== "all") {
+      query.category = category;
+      // atau pakai regex kalau mau:
+      // query.category = { $regex: category, $options: "i" };
+    }
+
+    const vouchers = await Voucher.find(query);
+
     res.status(200).json(successResponse("Fetched vouchers", vouchers));
   } catch (error) {
     res.status(500).json(errorResponse("Failed to fetch vouchers", error));

@@ -6,6 +6,7 @@ import transactionRoute from "./routes/transactionRoute";
 import midtransRoute from "./routes/midtransRoute";
 import reportRoute from "./routes/reportRoute";
 import categoryRoute from "./routes/categoryRoute";
+import dashbordRoute from "./routes/dashboardRoute";
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use("/api/transaction", transactionRoute);
 app.use("/api/midtrans", midtransRoute);
 app.use("/api/report", reportRoute);
 app.use("/api/category", categoryRoute);
+app.use("/api/home/", dashbordRoute);
 
 export default app;

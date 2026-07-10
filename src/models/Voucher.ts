@@ -1,28 +1,23 @@
 import { Schema, model, models } from "mongoose";
 
-const FieldSchema = new Schema(
+const VariantSchema = new Schema(
   {
     name: {
       type: String,
       required: true,
     },
-    label: {
-      type: String,
+
+    price: {
+      type: Number,
       required: true,
     },
-    component: {
-      type: String,
-      enum: ["input", "select", "textarea"],
-      default: "input",
+
+    discount: {
+      type: Number,
+      default: 0,
     },
-    placeholder: {
-      type: String,
-    },
-    type: {
-      type: String,
-      default: "text",
-    },
-    required: {
+
+    stock: {
       type: Boolean,
       default: true,
     },
@@ -30,21 +25,35 @@ const FieldSchema = new Schema(
   { _id: false },
 );
 
-const VariantSchema = new Schema(
+const FieldSchema = new Schema(
   {
     name: {
       type: String,
       required: true,
     },
-    price: {
-      type: Number,
+
+    label: {
+      type: String,
       required: true,
     },
-    discount: {
-      type: Number,
-      default: 0,
+
+    component: {
+      type: String,
+      enum: ["input", "textarea", "select"],
+      default: "input",
     },
-    stock: {
+
+    placeholder: {
+      type: String,
+      default: "",
+    },
+
+    type: {
+      type: String,
+      default: "text",
+    },
+
+    required: {
       type: Boolean,
       default: true,
     },
@@ -71,12 +80,30 @@ const VoucherSchema = new Schema(
     },
 
     description: String,
+
     image: String,
+
     badge: String,
+
     discountLabel: String,
+
     expired: Date,
-    fields: [FieldSchema],
-    variants: [VariantSchema],
+
+    field_type: {
+      type: String,
+      required: true,
+      enum: ["userId", "userIdZoneId", "email", "phone", "custom"],
+    },
+
+    fields: {
+      type: [FieldSchema],
+      default: [],
+    },
+
+    variants: {
+      type: [VariantSchema],
+      default: [],
+    },
   },
   {
     timestamps: true,

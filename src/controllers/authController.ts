@@ -11,26 +11,26 @@ import { successResponse, errorResponse } from "../utils/response";
 // register
 export const registerUser = async (req: Request, res: Response) => {
   try {
-  const { name, email, password } = req.body;
-  const exist = await User.findOne({ email });
-  if (exist) {
-    res.status(400).json({ message: "User already exists" });
-    return;
-  }
-  const existingName = await User.findOne({ name });
+    const { name, email, password } = req.body;
+    const exist = await User.findOne({ email });
+    if (exist) {
+      res.status(400).json({ message: "User already exists" });
+      return;
+    }
+    const existingName = await User.findOne({ name });
 
-  if (existingName) { 
-    res.status(400).json({ message: "Name already exists" });
+    if (existingName) {
+      res.status(400).json({ message: "Name already exists" });
+      return;
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    let user = await User.create({ name, email, password: hashedPassword });
+
+    res.status(201).json(successResponse("success", user));
     return;
-  }
-  const hashedPassword = await bcrypt.hash(password, 10);
-  let user = await User.create({ name, email, password: hashedPassword });
-  
-  res.status(201).json(successResponse("success", user));
-  return 
-  } catch (error){
+  } catch (error) {
     res.status(500).json(errorResponse("Failed to register user", error));
-    return
+    return;
   }
 };
 
@@ -38,30 +38,34 @@ export const registerUser = async (req: Request, res: Response) => {
 export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
- 
+
     const user = await User.findOne({ email });
-    console.log(user)
-    if (!user) { res.status(400).json({ message: "Invalid credentials" });return;}
+    console.log(user);
+    if (!user) {
+      res.status(400).json({ message: "Invalid credentials" });
+      return;
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)  {res.status(400).json({ message: "Invalid credentials" });return;}
+    if (!isMatch) {
+      res.status(400).json({ message: "Invalid credentials" });
+      return;
+    }
 
     const accessToken = generateAccessToken(user._id.toString());
-    console.log(generateAccessToken)
     const refreshToken = generateRefreshToken(user._id.toString());
 
     res.json({
       message: "Login success",
       user: { name: user.name, email: user.email },
-      accessToken
+      accessToken,
     });
-    return
+    return;
   } catch (error) {
-   res.status(500).json(errorResponse("Failed to login", error));
-   return 
+    res.status(500).json(errorResponse("Failed to login", error));
+    return;
   }
 };
-
 
 // refresh
 export const refreshToken = async (req: Request, res: Response) => {
@@ -80,5 +84,29 @@ export const refreshToken = async (req: Request, res: Response) => {
     res.json({ message: "Token refreshed" });
   } catch (err) {
     res.status(403).json({ message: "Invalid refresh token" });
+  }
+};
+
+// get user
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(successResponse("Fetched vouchers", users));
+  } catch (error) {
+    res.status(500).json(errorResponse("Failed to fetch vouchers", error));
+  }
+};
+
+// get user by id
+export const getUserById = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      res.status(404).json(errorResponse("User not found"));
+      return;
+    }
+    res.status(200).json(successResponse("Fetched voucher", user));
+  } catch (error) {
+    res.status(500).json(errorResponse("Failed to fetch voucher", error));
   }
 };
