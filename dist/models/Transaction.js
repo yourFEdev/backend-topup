@@ -4,6 +4,35 @@ exports.Transaction = void 0;
 // models/Transaction.ts
 const mongoose_1 = require("mongoose");
 const Counter_1 = require("./Counter");
+const TimelineSchema = new mongoose_1.Schema({
+    status: {
+        type: String,
+        enum: [
+            "created",
+            "waiting_payment",
+            "payment_received",
+            "processing",
+            "completed",
+            "failed",
+            "expired",
+        ],
+        required: true,
+    },
+    title: {
+        type: String,
+        required: true,
+    },
+    description: {
+        type: String,
+        default: "",
+    },
+    created_at: {
+        type: Date,
+        default: Date.now,
+    },
+}, {
+    _id: false,
+});
 const TransactionSchema = new mongoose_1.Schema({
     transaction_id: { type: String, unique: true }, // Auto-generated
     buyer_email: { type: String, required: true },
@@ -34,8 +63,15 @@ const TransactionSchema = new mongoose_1.Schema({
         default: null,
     },
     order_id: { type: String },
+    field_type: {
+        type: String,
+        default: null,
+    },
+    timeline: {
+        type: [TimelineSchema],
+        default: [],
+    },
 }, { timestamps: true });
-// Middleware untuk auto-increment transaction_id
 TransactionSchema.pre("save", async function (next) {
     if (this.isNew && !this.transaction_id) {
         const counter = await Counter_1.Counter.findByIdAndUpdate({ _id: "transaction" }, { $inc: { seq: 1 } }, { new: true, upsert: true });

@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
+const dns_1 = __importDefault(require("dns"));
+dns_1.default.setServers(["8.8.8.8", "1.1.1.1"]);
 const app_1 = __importDefault(require("./app"));
 const database_1 = require("./config/database");
 const PORT = process.env.PORT || 5000;

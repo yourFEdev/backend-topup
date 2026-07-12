@@ -1,22 +1,37 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTransaction = exports.updateTransaction = exports.getTransactionById = exports.getTransactions = exports.updateTransactionStatus = exports.createTransaction = void 0;
 const midtrans_node_client_1 = require("midtrans-node-client");
-const uuid_1 = require("uuid");
+const crypto_1 = __importDefault(require("crypto"));
 const Transaction_1 = require("../models/Transaction");
 const response_1 = require("../utils/response");
 const generateInvoice_1 = require("../utils/generateInvoice");
 const sendToMail_1 = require("../utils/sendToMail");
 const createTransaction = async (req, res) => {
     try {
-        const newTransaction = new Transaction_1.Transaction(req.body);
+        const newTransaction = new Transaction_1.Transaction({
+            ...req.body,
+            timeline: [
+                {
+                    status: "created",
+                    title: "Transaction Created",
+                },
+                {
+                    status: "waiting_payment",
+                    title: "Waiting for Payment",
+                },
+            ],
+        });
         const savedTransaction = await newTransaction.save();
         const snap = new midtrans_node_client_1.MidtransClient.Snap({
             isProduction: false,
             serverKey: process.env.SERVER_KEY,
             clientKey: process.env.CLIENT_KEY,
         });
-        const order_id = (0, uuid_1.v4)();
+        const order_id = crypto_1.default.randomUUID();
         const transaction = await snap.createTransaction({
             transaction_details: {
                 order_id,
@@ -24,7 +39,7 @@ const createTransaction = async (req, res) => {
             },
             item_details: [
                 {
-                    id: (0, uuid_1.v4)(),
+                    id: crypto_1.default.randomUUID(),
                     name: savedTransaction.voucher_name || "Voucher",
                     quantity: 1,
                     price: savedTransaction.variant.price || 40000,
@@ -42,7 +57,7 @@ const createTransaction = async (req, res) => {
                 },
             },
             callbacks: {
-                finish: `https://fe-topup-online.vercel.app/transaction/${savedTransaction.transaction_id}`,
+                finish: process.env.CB_MIDTRANS,
             },
         });
         savedTransaction.order_id = order_id;
@@ -53,7 +68,9 @@ const createTransaction = async (req, res) => {
         }));
     }
     catch (error) {
-        res.status(500).json((0, response_1.errorResponse)("Failed to create transaction and initiate payment", error));
+        res
+            .status(500)
+            .json((0, response_1.errorResponse)("Failed to create transaction and initiate payment", error));
     }
 };
 exports.createTransaction = createTransaction;
@@ -81,16 +98,16 @@ exports.updateTransactionStatus = updateTransactionStatus;
 // Get all transactions
 const getTransactions = async (req, res) => {
     try {
-        const transactions = await Transaction_1.Transaction.find({
-            payment_status: { $ne: "pending" }
-        });
+        // const transactions = await Transaction.find({
+        //   payment_status: { $ne: "pending" }
+        // });
+        const transactions = await Transaction_1.Transaction.find();
+        console.log(transactions);
         res.json((0, response_1.successResponse)("Transactions fetched", transactions));
         return;
     }
     catch (error) {
-        res
-            .status(500)
-            .json((0, response_1.errorResponse)("Failed to fetch transactions", error));
+        res.status(500).json((0, response_1.errorResponse)("Failed to fetch transactions", error));
         return;
     }
 };
@@ -98,7 +115,9 @@ exports.getTransactions = getTransactions;
 // Get a single transaction by ID
 const getTransactionById = async (req, res) => {
     try {
-        const transaction = await Transaction_1.Transaction.findOne({ transaction_id: req.params.id });
+        const transaction = await Transaction_1.Transaction.findOne({
+            transaction_id: req.params.id,
+        });
         if (!transaction) {
             res.status(404).json((0, response_1.errorResponse)("Transaction not found"));
             return;
@@ -134,7 +153,7 @@ const updateTransaction = async (req, res) => {
                 payment_method: transaction.payment_method,
                 payment_status: transaction.payment_status,
                 delivery_status: transaction.delivery_status,
-                date: new Date().toLocaleDateString('id-ID'),
+                date: new Date().toLocaleDateString("id-ID"),
             });
             await (0, sendToMail_1.sendToMail)(buyer_email, "Invoice Top-up", html);
         }

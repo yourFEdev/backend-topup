@@ -1,16 +1,36 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteVoucher = exports.updateVoucher = exports.createVoucher = exports.getVoucherByGameName = exports.getVoucherById = exports.getVouchers = void 0;
 const Voucher_1 = require("../models/Voucher");
 const response_1 = require("../utils/response");
-const slugify_1 = __importDefault(require("slugify"));
 // Get all vouchers
 const getVouchers = async (req, res) => {
     try {
-        const vouchers = await Voucher_1.Voucher.find();
+        const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
+        const category = typeof req.query.category === "string" ? req.query.category.trim() : "";
+        const query = {};
+        // Search
+        if (search) {
+            query.$or = [
+                {
+                    title: {
+                        $regex: search,
+                        $options: "i",
+                    },
+                },
+                {
+                    slug: {
+                        $regex: search,
+                        $options: "i",
+                    },
+                },
+            ];
+        }
+        // Category
+        if (category && category !== "All") {
+            query.category = category;
+        }
+        const vouchers = await Voucher_1.Voucher.find(query);
         res.status(200).json((0, response_1.successResponse)("Fetched vouchers", vouchers));
     }
     catch (error) {
@@ -25,7 +45,7 @@ const getVoucherById = async (req, res) => {
         console.log(req.params.id);
         const list = await Voucher_1.Voucher.find();
         console.log("Semua nama voucher:");
-        list.forEach(v => console.log(v.name));
+        list.forEach((v) => console.log(v.name));
         if (!voucher) {
             res.status(404).json((0, response_1.errorResponse)("Voucher not found"));
             return;
@@ -37,17 +57,20 @@ const getVoucherById = async (req, res) => {
     }
 };
 exports.getVoucherById = getVoucherById;
-// Get one Voucher by name 
+// Get one Voucher by name
 const getVoucherByGameName = async (req, res) => {
     try {
         const gameName = req.params.name;
         console.log("Game name param:", req.params.name);
-        const voucher = await Voucher_1.Voucher.find({ game_name: gameName });
+        const voucher = await Voucher_1.Voucher.findOne({ slug: gameName });
+        console.log(voucher);
         if (!voucher || voucher.length === 0) {
             res.status(404).json((0, response_1.errorResponse)("Voucher not found"));
             return;
         }
-        res.status(200).json((0, response_1.successResponse)("Fetched voucher by game name", voucher));
+        res
+            .status(200)
+            .json((0, response_1.successResponse)("Fetched voucher by game name", voucher));
         return;
     }
     catch (error) {
@@ -59,20 +82,16 @@ exports.getVoucherByGameName = getVoucherByGameName;
 // Create voucher
 const createVoucher = async (req, res) => {
     try {
-        const { voucher_name, game_name, ...rest } = req.body;
-        const slug = (0, slugify_1.default)(voucher_name, { lower: true, strict: true });
-        const newVoucher = new Voucher_1.Voucher({
-            voucher_id: slug,
-            voucher_name,
-            game_name,
-            ...rest,
-        });
+        const newVoucher = new Voucher_1.Voucher(req.body);
         const savedVoucher = await newVoucher.save();
         res.status(201).json((0, response_1.successResponse)("Voucher created", savedVoucher));
         return;
     }
     catch (error) {
-        res.status(500).json((0, response_1.errorResponse)("Failed to create voucher", error));
+        console.error(error);
+        res
+            .status(500)
+            .json((0, response_1.errorResponse)("Failed to create voucher", error.message));
         return;
     }
 };

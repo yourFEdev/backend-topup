@@ -22,8 +22,7 @@
     "midtrans-node-client": "^0.0.6",
     "mongoose": "^8.24.1",
     "nodemailer": "^9.0.3",
-    "slugify": "^1.6.9",
-    "uuid": "^14.0.1"
+    "slugify": "^1.6.9"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

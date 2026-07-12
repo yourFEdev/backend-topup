@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.refreshToken = exports.loginUser = exports.registerUser = void 0;
+exports.getUserById = exports.getUsers = exports.refreshToken = exports.loginUser = exports.registerUser = void 0;
 const User_1 = require("../models/User");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jwt_1 = require("../utils/jwt");
@@ -49,12 +49,11 @@ const loginUser = async (req, res) => {
             return;
         }
         const accessToken = (0, jwt_1.generateAccessToken)(user._id.toString());
-        console.log(jwt_1.generateAccessToken);
         const refreshToken = (0, jwt_1.generateRefreshToken)(user._id.toString());
         res.json({
             message: "Login success",
             user: { name: user.name, email: user.email },
-            accessToken
+            accessToken,
         });
         return;
     }
@@ -83,3 +82,29 @@ const refreshToken = async (req, res) => {
     }
 };
 exports.refreshToken = refreshToken;
+// get user
+const getUsers = async (req, res) => {
+    try {
+        const users = await User_1.User.find();
+        res.status(200).json((0, response_1.successResponse)("Fetched vouchers", users));
+    }
+    catch (error) {
+        res.status(500).json((0, response_1.errorResponse)("Failed to fetch vouchers", error));
+    }
+};
+exports.getUsers = getUsers;
+// get user by id
+const getUserById = async (req, res) => {
+    try {
+        const user = await User_1.User.findById(req.params.id);
+        if (!user) {
+            res.status(404).json((0, response_1.errorResponse)("User not found"));
+            return;
+        }
+        res.status(200).json((0, response_1.successResponse)("Fetched voucher", user));
+    }
+    catch (error) {
+        res.status(500).json((0, response_1.errorResponse)("Failed to fetch voucher", error));
+    }
+};
+exports.getUserById = getUserById;

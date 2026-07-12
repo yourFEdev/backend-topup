@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { MidtransClient } from "midtrans-node-client";
-import { v4 as uuidv4 } from "uuid";
+import crypto from "crypto";
 import { Transaction } from "../models/Transaction";
 import { successResponse, errorResponse } from "../utils/response";
 import { generateInvoiceTemplate } from "../utils/generateInvoice";
@@ -30,7 +30,7 @@ export const createTransaction = async (req: Request, res: Response) => {
       clientKey: process.env.CLIENT_KEY!,
     });
 
-    const order_id = uuidv4();
+    const order_id = crypto.randomUUID();
 
     const transaction = await snap.createTransaction({
       transaction_details: {
@@ -39,7 +39,7 @@ export const createTransaction = async (req: Request, res: Response) => {
       },
       item_details: [
         {
-          id: uuidv4(),
+          id: crypto.randomUUID(),
           name: savedTransaction.voucher_name || "Voucher",
           quantity: 1,
           price: savedTransaction.variant.price || 40000,
