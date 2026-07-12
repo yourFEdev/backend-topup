@@ -7,12 +7,13 @@ import midtransRoute from "./routes/midtransRoute";
 import reportRoute from "./routes/reportRoute";
 import categoryRoute from "./routes/categoryRoute";
 import dashbordRoute from "./routes/dashboardRoute";
+import { connectDB } from "./config/database";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-
+connectDB();
 app.get("/", (_, res) => {
   res.send("Hello Brox");
 });
