@@ -33,10 +33,8 @@ export const getVouchers = async (req: Request, res: Response) => {
     }
 
     // Category
-    if (category && category !== "all") {
+    if (category && category !== "All") {
       query.category = category;
-      // atau pakai regex kalau mau:
-      // query.category = { $regex: category, $options: "i" };
     }
 
     const vouchers = await Voucher.find(query);
