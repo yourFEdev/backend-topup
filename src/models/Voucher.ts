@@ -2,6 +2,10 @@ import { Schema, model, models } from "mongoose";
 
 const VariantSchema = new Schema(
   {
+    id: {
+      type: String,
+      required: true,
+    },
     name: {
       type: String,
       required: true,
@@ -18,42 +22,6 @@ const VariantSchema = new Schema(
     },
 
     stock: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  { _id: false },
-);
-
-const FieldSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-
-    label: {
-      type: String,
-      required: true,
-    },
-
-    component: {
-      type: String,
-      enum: ["input", "textarea", "select"],
-      default: "input",
-    },
-
-    placeholder: {
-      type: String,
-      default: "",
-    },
-
-    type: {
-      type: String,
-      default: "text",
-    },
-
-    required: {
       type: Boolean,
       default: true,
     },
@@ -93,11 +61,6 @@ const VoucherSchema = new Schema(
       type: String,
       required: true,
       enum: ["userId", "userIdZoneId", "email", "phone", "custom"],
-    },
-
-    fields: {
-      type: [FieldSchema],
-      default: [],
     },
 
     variants: {
