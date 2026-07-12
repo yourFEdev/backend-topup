@@ -13,8 +13,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("API Running");
+app.get("/", (_, res) => {
+  res.send("Hello Brox");
 });
 
 app.use("/api/auth", authRoutes);
