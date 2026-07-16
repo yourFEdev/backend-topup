@@ -9,7 +9,7 @@ const TimelineSchema = new Schema(
       enum: [
         "created",
         "waiting_payment",
-        "payment_received",
+        "paid",
         "processing",
         "completed",
         "failed",
