@@ -46,8 +46,8 @@ export const createTransaction = async (req: Request, res: Response) => {
         },
       ],
       customer_details: {
-        first_name: "Topup",
-        last_name: "Voucher",
+        first_name: "Voucher",
+        last_name: "Hub",
         email: savedTransaction.buyer_email || "xxaexa1@gmail.com",
         phone: "08123456789",
         billing_address: {
@@ -177,6 +177,15 @@ export const updateTransaction = async (req: Request, res: Response) => {
 
       await sendToMail(buyer_email, "Invoice Top-up", html);
     }
+
+    transaction.timeline.push({
+      status: "completed",
+      title: "Order Completed",
+      description: "Your order has been successfully processed.",
+      created_at: new Date(),
+    });
+
+    await transaction.save();
 
     res.json(successResponse("Transaction status updated", transaction));
     return;
