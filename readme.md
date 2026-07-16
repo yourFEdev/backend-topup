@@ -1,4 +1,4 @@
-# 🚀 TopUp API
+# TopUp API
 
 A scalable RESTful API for a digital voucher marketplace built with **Express.js**, **TypeScript**, **MongoDB**, and **Midtrans Payment Gateway**.
 
@@ -6,7 +6,7 @@ A scalable RESTful API for a digital voucher marketplace built with **Express.js
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 <p>
   <img src="https://img.shields.io/badge/Express.js-5-black?style=for-the-badge&logo=express" />
@@ -22,9 +22,9 @@ A scalable RESTful API for a digital voucher marketplace built with **Express.js
 
 ---
 
-# ✨ Features
+# Features
 
-## 🔐 Authentication
+## Authentication
 
 - User Registration
 - User Login
@@ -33,7 +33,7 @@ A scalable RESTful API for a digital voucher marketplace built with **Express.js
 
 ---
 
-## 🎮 Voucher Management
+## Voucher Management
 
 - Create Voucher
 - Update Voucher
@@ -44,7 +44,7 @@ A scalable RESTful API for a digital voucher marketplace built with **Express.js
 
 ---
 
-## 💳 Transactions
+## Transactions
 
 - Create Transaction
 - Transaction Detail
@@ -53,7 +53,7 @@ A scalable RESTful API for a digital voucher marketplace built with **Express.js
 
 ---
 
-## 💰 Midtrans Integration
+## Midtrans Integration
 
 - Snap Payment
 - Payment Notification
@@ -62,13 +62,13 @@ A scalable RESTful API for a digital voucher marketplace built with **Express.js
 
 ---
 
-## 📊 Reports
+## Reports
 
 - Transaction Report
 
 ---
 
-# 🚀 Installation
+# Installation
 
 ```bash
 git clone https://github.com/yourFEdev/backend-voucherHub.git
@@ -98,7 +98,7 @@ npm run build
 
 ---
 
-# 📌 API Modules
+# API Modules
 
 | Module      | Description      |
 | ----------- | ---------------- |
@@ -109,7 +109,7 @@ npm run build
 
 ---
 
-# 🔒 Security
+# Security
 
 - JWT Authentication
 - Password Hashing
